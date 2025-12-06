@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./Login.css";
-import logo from "../../assets/unilorin_logo2.png";
+import logo from "../../assets/NewGate_logo_III.png";
 import loader from "../../assets/loader.svg";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";

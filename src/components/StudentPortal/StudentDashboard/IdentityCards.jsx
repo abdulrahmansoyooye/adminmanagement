@@ -7,28 +7,36 @@ import { useNavigate } from "react-router-dom";
 
 const IdentityCards = () => {
   const [idcards, setIdcards] = useState([]);
+  const [loading, setLoading] = useState(true); // ← add this
+  const [error, setError] = useState(null);     // ← add this
+
   useEffect(() => {
     (async function fetchUserData() {
       try {
         const response = await fetch(
-          `https://studentbackendportal.onrender.com/idcard`
+        `https://studentbackendportal.onrender.com/idcard/`
         );
         const data = await response.json();
         setIdcards(data);
       } catch (error) {
         console.error("Failed to fetch user data:", error);
-      }
+         setError(error.message)
+      } finally{
+      setLoading(false); // ← THIS is where you stop the loader
+    }
     })();
   }, []);
   const navigate = useNavigate();
+
   const HandleDelete = async (_id) => {
     try {
-      const response = await axios.delete(
-        `https://studentbackendportal.onrender.com/idcard/delete/${_id}`
+      const response = await axios.patch(
+        `https://studentbackendportal.onrender.com/idcard/${_id}/revoke`
       );
+
       if (response.status === 200) navigate("/");
     } catch (error) {
-      console.error("Failed to fetch user data:", error);
+      console.error("Failed to revoke ID card:", error);
     }
   };
   return (

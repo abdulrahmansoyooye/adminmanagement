@@ -1,12 +1,12 @@
 // src/student-dashboard/Header.jsx
 import React from "react";
 import { MoreVertical } from "lucide-react";
-import logo2 from "../../assets/unilorin_logo.jpeg"; // Import the new log
+import logo2 from "../../assets/NewGate_logo_III.png"; // Import the new log
 const Header = () => {
   return (
     <header className="fixed w-full   bg-white flex justify-between items-center p-4  ">
       <div className="flex items-center">
-        <img src={logo2} alt="unilorin logo" className="w-[30px]" />
+        <img src={logo2} alt="New gate logo" className="w-[30px]" />
         {/* <img src={newLogo} alt="Logo" className="w-20 h-auto" />{" "} */}
         {/* Adjust size as needed */}
         <h1 className="ml-3 text-xl font-[500]">Admin ID Management</h1>
