@@ -1,7 +1,8 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import ProfileOverview from "./ProfileOverview";
-import IdCardDetails from "../IDcardDetails";
+import PrintIDCard from "../PrintIDCard";
+import IDcardDetails from "../IDcardDetails";
 import LatestNews from "./LatestNews";
 // import Header from "./Header";
 

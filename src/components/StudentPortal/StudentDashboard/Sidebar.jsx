@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import logo from "../../assets/sdm2_logo.png";
 import identityCardIcon from "../../assets/id-card.png";
+import print from "../../assets/print.png";
 import registrationIcon from "../../assets/contact-form.png";
 import documentIcon from "../../assets/manage.png";
 import notificationIcon from "../../assets/notification.png";
@@ -98,6 +99,13 @@ export default function Sidebar() {
                   id="profile"
                   link="/profile-overview"
                 />
+                <SidebarItem
+                  icon={<img src={print} alt="Id Card" className="w-5" />}
+                  text="Print idcard"
+                  to="/print-id-card"
+                  id="print"
+                  link="/print-id-card"
+                /> 
 
                 <div className="relative flex  flex-col gap-[1rem]  border-t  pt-[1rem] items-center">
                   <div
