@@ -51,7 +51,15 @@ export default function StudentProfile() {
             </div>
 
             <div className="flex gap-3">
-              {idCard.status === "pending" && (
+              {idCard.status === "approved" && (
+              <button
+                onClick={handlePrint}
+                className="w-full border py-2 rounded"
+              >
+                Print ID Card
+              </button>
+            )}
+              {idCard.status === "revoked" && (
                 <button
                   onClick={() => updateStatus("approve")}
                   className="flex-1 bg-green-600 text-white py-2 rounded"
@@ -60,7 +68,7 @@ export default function StudentProfile() {
                 </button>
               )}
 
-              {idCard.status !== "revoked" && (
+              {idCard.status === "approved" && (
                 <button
                   onClick={() => updateStatus("revoke")}
                   className="flex-1 bg-red-600 text-white py-2 rounded"
@@ -68,16 +76,17 @@ export default function StudentProfile() {
                   Revoke
                 </button>
               )}
+
+              {idCard.status === "pending" && (
+                <button
+                  className="flex-1 border  py-2 rounded"
+                >
+                  Not Requested(Pending)
+                </button>
+              )}
             </div>
 
-            {idCard.status === "approved" && (
-              <button
-                onClick={handlePrint}
-                className="w-full border py-2 rounded"
-              >
-                Print ID Card
-              </button>
-            )}
+          
           </>
         )}
       </section>

@@ -79,17 +79,25 @@ export default function Sidebar() {
         `}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3 px-4 py-6 border-b">
-          <img src={logo} alt="School Logo" className="w-8 h-8" />
+        <div className="flex flex-col gap-3 px-4 py-6 border-b">
+      
           {expanded && (
             <span className="font-semibold text-gray-800">
-              Student Portal
+              Dashboard
             </span>
           )}
+           <button
+            aria-label="Expand sidebar"
+            onClick={() => setExpanded((p) => !p)}
+            className="hidden md:flex items-center justify-center w-full rounded-md bg-gray-100 p-2 hover:bg-gray-200"
+          >
+            {expanded ? <ChevronLeft /> : <ChevronRight />}
+          </button>
         </div>
 
         {/* Nav */}
-        <nav className="flex flex-col gap-1 px-2 py-4 justify-even border">
+        <nav className="flex flex-col gap-1 px-2 py-4 justify-even ">
+        
           {NAV_ITEMS.map((item) => {
             const active = pathname === item.to;
 
@@ -124,13 +132,7 @@ export default function Sidebar() {
           </div>
 
           {/* Expand Toggle (Desktop) */}
-          <button
-            aria-label="Expand sidebar"
-            onClick={() => setExpanded((p) => !p)}
-            className="hidden md:flex items-center justify-center w-full rounded-md bg-gray-100 p-2 hover:bg-gray-200"
-          >
-            {expanded ? <ChevronLeft /> : <ChevronRight />}
-          </button>
+         
         </div>
       </aside>
     </>
