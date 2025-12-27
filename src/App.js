@@ -22,6 +22,7 @@ import DownloadIdCard from "./components/StudentPortal/StudentDashboard/Download
 import QrCodeDisplay from "./components/StudentPortal/StudentDashboard/QrCodeDisplay";
 import IdCardDetails from "./components/StudentPortal/IDcardDetails.jsx";
 import { useSession } from "./context/session.jsx";
+import StudentProfile from "./components/StudentPortal/StudentDashboard/EachStudent.jsx";
 
 export default function App() {
   const { sessionData } = useSession();
@@ -61,7 +62,7 @@ export default function App() {
             <Route path="qr-code-display" element={<QrCodeDisplay />} />
           </Route>
 
-          <Route path="/profile-overview" element={<ProfileOverview />} />
+          <Route path="/students/:id" element={<StudentProfile />} />
           <Route path="/edit-profile" element={<EditProfile />} />
         </Route>
       </Routes>

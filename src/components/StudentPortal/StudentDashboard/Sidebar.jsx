@@ -1,169 +1,165 @@
 // src/student-dashboard/Sidebar.jsx
-import React, { createContext, useContext, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, memo } from "react";
+import { Link, useLocation } from "react-router-dom";
 import {
-  ChevronFirst,
-  ChevronLast,
+  ChevronLeft,
+  ChevronRight,
   LayoutDashboard,
-  UserCircle,
-  Edit,
-  LoaderPinwheel,
-  StopCircle,
-  StopCircleIcon,
-  Delete,
+ 
 } from "lucide-react";
+
 import logo from "../../assets/sdm2_logo.png";
 import identityCardIcon from "../../assets/id-card.png";
-import print from "../../assets/print.png";
-import registrationIcon from "../../assets/contact-form.png";
-import documentIcon from "../../assets/manage.png";
-import notificationIcon from "../../assets/notification.png";
+import printIcon from "../../assets/print.png";
 import { useSession } from "../../../context/session";
 
-const SidebarContext = createContext();
+/* =========================
+   NAV CONFIG (single source)
+========================= */
+const NAV_ITEMS = [
+  {
+    id: "dashboard",
+    label: "Dashboard",
+    icon: <LayoutDashboard size={20} />,
+    to: "/",
+  },
+  {
+    id: "id-card",
+    label: "ID Card",
+    icon: <img src={identityCardIcon} alt="" className="w-5" />,
+    to: "/identity-cards",
+  },
+ 
+  {
+    id: "print",
+    label: "Print ID Card",
+    icon: <img src={printIcon} alt="" className="w-5" />,
+    to: "/print-id-card",
+  },
+];
 
 export default function Sidebar() {
-  const [expanded, setExpanded] = useState(false);
-  const [logoutToggle, setLogoutToggle] = useState(true);
-  const [openItem, setOpenItem] = useState(null); // State to keep track of the currently open item
-  const { logout } = useSession();
-  const [user, setUser] = useState("");
-  const [mobileNav, setMobileNav] = useState(false);
+  const { logout, } = useSession();
+  const { pathname } = useLocation();
 
-  const handleToggle = () => {
-    setExpanded(!expanded);
-  };
+  const [expanded, setExpanded] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
   const handleLogout = () => {
     logout();
     window.location.reload();
   };
-  return (
-    <div>
-      <div className="fixed  mt-[4rem] p-4 pb-2 flex justify-between items-center ">
-        <button
-          onClick={() => setMobileNav((prev) => !prev)}
-          className="p-1.5 rounded-lg bg-white "
-        >
-          {expanded ? <ChevronFirst /> : <ChevronLast />}
-        </button>
-      </div>
-      {mobileNav && (
-        <aside className="fixed h-[100vh] bg-white  ">
-          <div className="  mt-[4rem] p-4 pb-2 flex justify-between items-center ">
-            <button
-              onClick={() => setMobileNav((prev) => !prev)}
-              className="p-1.5 rounded-lg bg-white "
-            >
-              <Delete />
-            </button>
-          </div>
-          <div className="  mt-[2rem] p-4 pb-2 flex justify-between items-center ">
-            <button
-              onClick={handleToggle}
-              className="p-1.5 rounded-lg bg-white "
-            >
-              {expanded ? <ChevronFirst /> : <ChevronLast />}
-            </button>
-          </div>
-          <nav
-            className={`h-full flex flex-col  justify-between  shadow-sm transition-all duration-300 `}
-          >
-            <SidebarContext.Provider
-              value={{ expanded, openItem, setOpenItem }}
-            >
-              <ul className="flex-1  px-3">
-                <div className="p-[0.2rem] rounded-lg ml-auto ">
-                  <SidebarItem
-                    icon={<LayoutDashboard size={24} />}
-                    text="Dashboard"
-                    to="/"
-                    id="dashboard"
-                    link="/"
-                  />
-                </div>
-
-                <SidebarItem
-                  icon={
-                    <img src={identityCardIcon} alt="Id Card" className="w-5" />
-                  }
-                  text="ID Card"
-                  to="/id-card"
-                  id="id-card"
-                  link="/identity-cards"
-                />
-
-                <SidebarItem
-                  icon={<UserCircle size={24} />}
-                  text="Profile Overview"
-                  to="/profile-overview"
-                  id="profile"
-                  link="/profile-overview"
-                />
-                <SidebarItem
-                  icon={<img src={print} alt="Id Card" className="w-5" />}
-                  text="Print idcard"
-                  to="/print-id-card"
-                  id="print"
-                  link="/print-id-card"
-                /> 
-
-                <div className="relative flex  flex-col gap-[1rem]  border-t  pt-[1rem] items-center">
-                  <div
-                    className={`left-[50px] cursor-pointer absolute top-0 p-[1rem] bg-gray-50 ${
-                      logoutToggle ? "hidden" : "flex"
-                    } rounded-md `}
-                    onClick={handleLogout}
-                  >
-                    Logout
-                  </div>
-                  <img
-                    src={
-                      `https://studentbackendportal.onrender.com/assets/${user.photo}` ||
-                      "https://via.placeholder.com/150"
-                    }
-                    alt="Profile"
-                    className="w-10 h-[20] cursor-pointer rounded-full bg-gray-50 "
-                    onClick={() => setLogoutToggle(!logoutToggle)}
-                  />
-                </div>
-              </ul>
-            </SidebarContext.Provider>
-          </nav>
-        </aside>
-      )}
-    </div>
-  );
-}
-
-function SidebarItem({ icon, text, to, id, link }) {
-  const { expanded, openItem, setOpenItem } = useContext(SidebarContext);
-  const isOpen = openItem === id;
-
-  const handleClick = () => {
-    setOpenItem(isOpen ? null : id);
-  };
 
   return (
     <>
-      <a href={link}>
-        <li
-          onClick={handleClick}
-          className={`flex items-center py-5 px-3 my-2 font-medium rounded-md cursor-pointer transition-colors ${
-            isOpen
-              ? "bg-[#000080] text-white"
-              : "hover:bg-indigo-50 text-gray-600"
-          }`}
-        >
-          <div className="icon-wrapper">{icon}</div>
-          <div
-            className={`ml-3 transition-all duration-300 ${
-              expanded ? "block" : "hidden"
-            }`}
-          >
-            {text}
+      {/* ===== Mobile Toggle Button ===== */}
+      <button
+        aria-label="Toggle sidebar"
+        className="fixed top-4 left-4 z-50 rounded-lg bg-white p-2 shadow md:hidden"
+        onClick={() => setMobileOpen((p) => !p)}
+      >
+        {mobileOpen ? <ChevronLeft /> : <ChevronRight />}
+      </button>
+
+      {/* ===== Overlay (Mobile) ===== */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          onClick={() => setMobileOpen(false)}
+        />
+      )}
+
+      {/* ===== Sidebar ===== */}
+      <aside
+        className={`
+          fixed z-50 h-screen bg-white shadow-lg transition-all duration-300 border flex flex-col
+          ${expanded ? "w-64" : "w-20"}
+          ${mobileOpen ? "left-0" : "-left-full"}
+          md:left-0
+        `}
+      >
+        {/* Logo */}
+        <div className="flex items-center gap-3 px-4 py-6 border-b">
+          <img src={logo} alt="School Logo" className="w-8 h-8" />
+          {expanded && (
+            <span className="font-semibold text-gray-800">
+              Student Portal
+            </span>
+          )}
+        </div>
+
+        {/* Nav */}
+        <nav className="flex flex-col gap-1 px-2 py-4 justify-even border">
+          {NAV_ITEMS.map((item) => {
+            const active = pathname === item.to;
+
+            return (
+              <NavItem
+                key={item.id}
+                {...item}
+                expanded={expanded}
+                active={active}
+                onClick={() => setMobileOpen(false)}
+              />
+            );
+          })}
+        </nav>
+
+        {/* Footer */}
+        <div className="mt-auto border-t px-3 py-4 space-y-3">
+          <div className="flex items-center gap-3">
+            
+
+            {expanded && (
+              <div className="flex-1">
+              
+                <button
+                  onClick={handleLogout}
+                  className="mt-4 w-full border py-2 rounded hover:bg-gray-100"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
-        </li>
-      </a>
+
+          {/* Expand Toggle (Desktop) */}
+          <button
+            aria-label="Expand sidebar"
+            onClick={() => setExpanded((p) => !p)}
+            className="hidden md:flex items-center justify-center w-full rounded-md bg-gray-100 p-2 hover:bg-gray-200"
+          >
+            {expanded ? <ChevronLeft /> : <ChevronRight />}
+          </button>
+        </div>
+      </aside>
     </>
   );
 }
+
+/* =========================
+   Nav Item (Memoized)
+========================= */
+const NavItem = memo(function NavItem({
+  icon,
+  label,
+  to,
+  expanded,
+  active,
+  onClick,
+}) {
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={`
+        flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition
+        ${active ? "bg-indigo-600 text-white" : "text-gray-600 hover:bg-indigo-50"}
+      `}
+      aria-current={active ? "page" : undefined}
+    >
+      {icon}
+      {expanded && <span>{label}</span>}
+    </Link>
+  );
+});
