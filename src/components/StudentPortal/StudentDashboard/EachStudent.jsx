@@ -49,9 +49,7 @@ export default function StudentProfile() {
             <div ref={printRef}>
               <IdCardDetails data={idCard} />
             </div>
-
-            <div className="flex gap-3">
-              {idCard.status === "approved" && (
+   {idCard.status === "approved" && (
               <button
                 onClick={handlePrint}
                 className="w-full border py-2 rounded"
@@ -59,6 +57,8 @@ export default function StudentProfile() {
                 Print ID Card
               </button>
             )}
+            <div className="flex gap-3">
+           
               {idCard.status === "revoked" && (
                 <button
                   onClick={() => updateStatus("approve")}
