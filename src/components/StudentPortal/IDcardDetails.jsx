@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSession } from "../../context/session";
 
 const IdCardDetails = ({ data }) => {
-  const { fullName, matricNimber, faculty, department, level, email, photo } =
+  const { fullName, matricNumber, department, level, email, photo } =
     data;
 
   return (
@@ -24,7 +24,7 @@ const IdCardDetails = ({ data }) => {
       <div className="">
         <div className="flex-col text-sm gap-[0.5rem] text-gray-600  mb-6 flex  justify-between w-full ">
           <strong>Matric No</strong>{" "}
-          <p className="w-full text-right">{matricNimber}</p>
+          <p className="w-full text-right">{matricNumber}</p>
         </div>
         <div className="flex-col gap-[0.5rem] text-gray-600 mb-6 flex w-full  justify-between">
           <strong>Department</strong> <p className="text-right">{department}</p>

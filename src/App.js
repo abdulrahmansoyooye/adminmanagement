@@ -23,6 +23,7 @@ import DownloadIdCard from "./components/StudentPortal/StudentDashboard/Download
 import QrCodeDisplay from "./components/StudentPortal/StudentDashboard/QrCodeDisplay";
 import IdCardDetails from "./components/StudentPortal/IDcardDetails.jsx";
 import { useSession } from "./context/session.jsx";
+import StudentProfile from "./components/StudentPortal/StudentDashboard/EachStudent.jsx";
 
 export default function App() {
   const { sessionData } = useSession();
@@ -61,8 +62,13 @@ export default function App() {
           <Route path="/identity-cards" element={<IdentityCards />}>
             <Route path="qr-code-display" element={<QrCodeDisplay />} />
           </Route>
+<<<<<<< HEAD
            <Route path="/print-id-card" element={<PrintID />} />
           <Route path="/profile-overview" element={<ProfileOverview />} />
+=======
+
+          <Route path="/students/:id" element={<StudentProfile />} />
+>>>>>>> 96dcf5a9f50d0e6f99c66f310be0c65e4a5ba6c4
           <Route path="/edit-profile" element={<EditProfile />} />
        
         </Route>

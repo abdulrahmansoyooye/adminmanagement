@@ -189,7 +189,7 @@ const IDCard = React.forwardRef(({ idcardData }, ref) => {
               </span>
             </div>
 
-            <div style={{ marginTop: 12}}>
+            <div style={{ marginTop: 12 }}>
               <div style={{ fontWeight: 900 }}>SIGNATURE:</div>
               <div style={{ marginTop: 6 }}>
                 <img
@@ -286,6 +286,7 @@ const PrintIDCard = () => {
         setIdcard(data);
       } catch (err) {
         console.error("Failed to fetch id data:", err);
+        // optionally set sample data fallback
         setIdcard({
           fullName: "ABUBAKAR YUSUF",
           matricNimber: "24A/UE/BCSX/10020",
@@ -307,7 +308,6 @@ const PrintIDCard = () => {
   });
 
   const handleDownload = async () => {
-    if (!componentRef.current) return;
     const input = componentRef.current;
     const canvas = await html2canvas(input, { scale: 2, useCORS: true });
     const imgData = canvas.toDataURL("image/png");
@@ -322,7 +322,7 @@ const PrintIDCard = () => {
   return (
     <div className="w-full flex flex-col items-center p-6">
       <div style={{ background: "transparent" }}>
-        {idcard && <IDCard ref={componentRef} idcardData={idcard} />}
+        <IDCard ref={componentRef} idcardData={idcard} />
       </div>
 
       <div style={{ marginTop: 18, display: "flex", gap: 12 }}>

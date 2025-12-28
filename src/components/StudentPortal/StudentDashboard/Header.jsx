@@ -9,7 +9,7 @@ const Header = () => {
         <img src={logo2} alt="New gate logo" className="w-[30px]" />
         {/* <img src={newLogo} alt="Logo" className="w-20 h-auto" />{" "} */}
         {/* Adjust size as needed */}
-        <h1 className="ml-3 text-xl font-[500]">Admin ID Management</h1>
+        <h1 className="ml-16 text-xl font-[500]">Dashboard</h1>
       </div>
       <div className="flex items-center">
         <div className="flex flex-col mr-4">

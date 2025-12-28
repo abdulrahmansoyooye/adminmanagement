@@ -1,86 +1,67 @@
-import React from "react";
-import IdCardDetails from "../IDcardDetails";
-import { useEffect } from "react";
-import { useState } from "react";
-import axios from "axios";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "../../../lib/api";
 
-const IdentityCards = () => {
-  const [idcards, setIdcards] = useState([]);
-  const [loading, setLoading] = useState(true); // ← add this
-  const [error, setError] = useState(null);     // ← add this
-
-  useEffect(() => {
-    (async function fetchUserData() {
-      try {
-        const response = await fetch(
-        `https://studentbackendportal.onrender.com/idcard/`
-        );
-        const data = await response.json();
-        setIdcards(data);
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-         setError(error.message)
-      } finally{
-      setLoading(false); // ← THIS is where you stop the loader
-    }
-    })();
-  }, []);
+export default function IdCardsList() {
+  const [idCards, setIdCards] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const HandleDelete = async (_id) => {
+  const fetchIdCards = useCallback(async () => {
     try {
-      const response = await axios.patch(
-        `https://studentbackendportal.onrender.com/idcard/${_id}/revoke`
-      );
-
-      if (response.status === 200) navigate("/");
-    } catch (error) {
-      console.error("Failed to revoke ID card:", error);
+      const { data } = await api.get("/idcard");
+      setIdCards(data);
+    } catch {
+      setError("Failed to load ID cards");
+    } finally {
+      setLoading(false);
     }
-  };
-  return (
-    <div className="flex flex-col gap-[2rem] p-[2rem_1rem]  w-full">
-      <div className="flex max-lg:flex-col justify-between  gap-[1rem]">
-        <h2 className="text-xl font-semibold">User IdCards</h2>
-      </div>
+  }, []);
 
-      <div className="flex flex-wrap gap-[1rem] justify-center items-center">
-        {idcards.length > 0 ? (
-          idcards.map(
-            (
-              { fullName, _id, matricNimber, level, department, email, userId,photo },
-              index
-            ) => (
-              <div
-                className="space-y-[1rem] rounded-md p-8 w-full  bg-white  sm:w-[40%]"
-                key={index}
-              >
-                <IdCardDetails
-                  data={{
-                    fullName,
-                    _id,
-                    matricNimber,
-                    level,
-                    department,
-                    email,
-                    photo
-                  }}
-                />
-                <div
-                  className="bg-red-500 text-white cursor-pointer text-center w-full p-[1rem] rounded-md"
-                  onClick={() => HandleDelete(userId)}
-                >
-                  Revoke Id card
-                </div>
-              </div>
-            )
-          )
-        ) : (
-          <div>No Idcards Found</div>
-        )}
-      </div>
-    </div>
+  useEffect(() => {
+    fetchIdCards();
+  }, [fetchIdCards]);
+
+  if (loading) return <p className="p-8">Loading...</p>;
+  if (error) return <p className="p-8 text-red-600">{error}</p>;
+
+  return (
+    <main className="min-h-screen bg-gray-50 p-6">
+      <section className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {idCards.map((card) => (
+          <div
+            key={card._id}
+            className="bg-white p-5 rounded-lg shadow"
+          >
+            <h3 className="font-semibold">{card.fullName}</h3>
+            <p className="text-sm text-gray-500">
+              {card.matricNumber}
+            </p>
+
+            <span
+              className={`inline-block mt-2 text-xs px-3 py-1 rounded-full ${
+                card.status === "approved"
+                  ? "bg-green-100 text-green-700"
+                  : card.status === "pending"
+                  ? "bg-yellow-100 text-yellow-700"
+                  : "bg-gray-100 text-gray-600"
+              }`}
+            >
+              {card.status.toUpperCase()}
+            </span>
+
+            <button
+              onClick={() =>
+                navigate(`/students/${card.userId}`)
+              }
+              className="mt-4 w-full border py-2 rounded hover:bg-gray-100"
+            >
+              View Student
+            </button>
+          </div>
+        ))}
+      </section>
+    </main>
   );
-};
-export default IdentityCards;
+}
