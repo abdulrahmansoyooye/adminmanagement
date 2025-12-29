@@ -16,6 +16,7 @@ import Notifications from "./components/StudentPortal/StudentDashboard/Notificat
 import DocumentManagement from "./components/StudentPortal/StudentDashboard/DocumentManagement";
 import Help from "./components/StudentPortal/StudentDashboard/Help";
 import ProfileOverview from "./components/StudentPortal/StudentDashboard/ProfileOverview";
+import PrintID from "./components/StudentPortal/StudentDashboard/PrintID.jsx";
 import EditProfile from "./components/StudentPortal/StudentDashboard/EditProfile";
 import ViewIdCard from "./components/StudentPortal/StudentDashboard/ViewIdCard";
 import DownloadIdCard from "./components/StudentPortal/StudentDashboard/DownloadIdCard";
@@ -61,10 +62,17 @@ export default function App() {
           <Route path="/identity-cards" element={<IdentityCards />}>
             <Route path="qr-code-display" element={<QrCodeDisplay />} />
           </Route>
+<<<<<<< HEAD
+           <Route path="/print-id-card" element={<PrintID />} />
+          <Route path="/profile-overview" element={<ProfileOverview />} />
+=======
 
           <Route path="/students/:id" element={<StudentProfile />} />
+>>>>>>> 96dcf5a9f50d0e6f99c66f310be0c65e4a5ba6c4
           <Route path="/edit-profile" element={<EditProfile />} />
+       
         </Route>
+        
       </Routes>
     </BrowserRouter>
   );

@@ -16,4 +16,41 @@ body {
   .green_btn {
     @apply bg-green-600 text-white px-4 py-2 rounded hover:bg-[#000080] transition-all duration-500;
   }
+  /* hexagon crop + red border look */
+.hexagon-outer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.hexagon-inner {
+  width: 132px;
+  height: 132px;
+  clip-path: polygon(
+    25% 5%,
+    75% 5%,
+    100% 50%,
+    75% 95%,
+    25% 95%,
+    0% 50%
+  );
+  border: 6px solid #e34b47; /* red border like sample */
+  box-sizing: border-box;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #fff;
+}
+
+/* Print-friendly: scale to fit when printing */
+@media print {
+  body {
+    -webkit-print-color-adjust: exact;
+  }
+  .idcard-sheet {
+    page-break-inside: avoid;
+  }
+  .idcard-front, .idcard-back {
+    box-shadow: none !important;
+  }
+}
+
 }
