@@ -44,51 +44,55 @@ export default function StudentProfile() {
           </p>
         )}
 
-        {idCard && (
-          <>
-            <div ref={printRef}>
-              <IdCardDetails data={idCard} />
-            </div>
-   {idCard.status === "approved" && (
-              <button
-                onClick={handlePrint}
-                className="w-full border py-2 rounded"
-              >
-                Print ID Card
-              </button>
-            )}
-            <div className="flex gap-3">
-           
-              {idCard.status === "revoked" && (
-                <button
-                  onClick={() => updateStatus("approve")}
-                  className="flex-1 bg-green-600 text-white py-2 rounded"
-                >
-                  Approve
-                </button>
-              )}
+      { idCard && (
+  <>
+    {/* Printable ID Card */}
+    <div ref={printRef}>
+      <IdCardDetails data={idCard} />
+    </div>
 
-              {idCard.status === "approved" && (
-                <button
-                  onClick={() => updateStatus("revoke")}
-                  className="flex-1 bg-red-600 text-white py-2 rounded"
-                >
-                  Revoke
-                </button>
-              )}
+    {/* Print button only when approved */}
+    {idCard.status === "approved" && (
+      <button
+        onClick={handlePrint}
+        className="w-full border py-2 rounded"
+      >
+        Print ID Card
+      </button>
+    )}
 
-              {idCard.status === "pending" && (
-                <button
-                  className="flex-1 border  py-2 rounded"
-                >
-                  Not Requested(Pending)
-                </button>
-              )}
-            </div>
+    {/* Status Actions */}
+    <div className="flex gap-3">
+      {idCard.status === "revoked" && (
+        <button
+          onClick={() => updateStatus("approved")}
+          className="flex-1 bg-green-600 text-white py-2 rounded"
+        >
+          Approve
+        </button>
+      )}
 
-          
-          </>
-        )}
+      {idCard.status === "approved" && (
+        <button
+          onClick={() => updateStatus("revoked")}
+          className="flex-1 bg-red-600 text-white py-2 rounded"
+        >
+          Revoke
+        </button>
+      )}
+
+      {idCard.status === "pending" && (
+        <button
+          disabled
+          className="flex-1 border py-2 rounded opacity-60 cursor-not-allowed"
+        >
+          Pending Approval
+        </button>
+      )}
+    </div>
+  </>
+)}
+
       </section>
     </main>
   );
