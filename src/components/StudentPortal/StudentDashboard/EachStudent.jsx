@@ -63,7 +63,7 @@ export default function StudentProfile() {
 
     {/* Status Actions */}
     <div className="flex gap-3">
-      {idCard.status === "revoked" && (
+      {idCard.status !== "approved" && (
         <button
           onClick={() => updateStatus("approved")}
           className="flex-1 bg-green-600 text-white py-2 rounded"
@@ -81,14 +81,7 @@ export default function StudentProfile() {
         </button>
       )}
 
-      {idCard.status === "pending" && (
-        <button
-          disabled
-          className="flex-1 border py-2 rounded opacity-60 cursor-not-allowed"
-        >
-          Pending Approval
-        </button>
-      )}
+    
     </div>
   </>
 )}
