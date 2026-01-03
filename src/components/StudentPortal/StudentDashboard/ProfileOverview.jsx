@@ -86,11 +86,11 @@ export default function StudentsList() {
 
                 <button
                   onClick={() =>
-                    navigate(`/students/${user._id}`)
+                    navigate(`/identity-cards`)
                   }
                   className="mt-4 w-full border py-2 rounded hover:bg-gray-100"
                 >
-                  View Student
+                  View ID Card
                 </button>
               </article>
             ))}

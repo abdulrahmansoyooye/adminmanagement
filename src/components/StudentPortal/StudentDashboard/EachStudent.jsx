@@ -75,7 +75,7 @@ export default function StudentProfile() {
                   {/* Approve Action */}
                   {(idCard.status === "pending" || idCard.status === "revoked") && (
                     <button
-                      onClick={() => updateStatus("approved")}
+                      onClick={() => updateStatus("approve")}
                       className="w-full bg-green-600 text-white py-3 rounded-lg font-medium shadow-md hover:bg-green-700 hover:shadow-lg transition-all transform active:scale-95"
                     >
                       Approve Request
@@ -96,7 +96,7 @@ export default function StudentProfile() {
                       </button>
 
                       <button
-                        onClick={() => updateStatus("revoked")}
+                        onClick={() => updateStatus("revoke")}
                         className="w-full bg-red-50 text-red-600 border border-red-200 py-3 rounded-lg font-medium hover:bg-red-100 transition-colors active:bg-red-200"
                       >
                         Revoke Approval
