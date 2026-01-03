@@ -13,7 +13,24 @@ export default function StudentProfile() {
   const printRef = useRef(null);
 
   const handlePrint = useReactToPrint({
-    content: () => printRef.current,
+    content: () => {
+      if (!printRef.current) {
+        console.error("Print reference is missing!");
+      }
+      return printRef.current;
+    },
+    documentTitle: `Student_ID_${idCard?.matricNumber || "Card"}`,
+    pageStyle: `
+      @page {
+        size: auto;
+        margin: 0mm;
+      }
+      @media print {
+        body {
+          -webkit-print-color-adjust: exact;
+        }
+      }
+    `,
   });
 
   useEffect(() => {
@@ -86,7 +103,7 @@ export default function StudentProfile() {
                   {idCard.status === "approved" && (
                     <>
                       <button
-                        onClick={handlePrint}
+                        onClick={() => handlePrint()}
                         className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium shadow-md hover:bg-indigo-700 hover:shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2"
                       >
                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
