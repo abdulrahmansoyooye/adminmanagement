@@ -3,7 +3,7 @@ import { useReactToPrint } from "react-to-print";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import logo from "../../assets/NewGate_logo_III.png";         // university logo (same used on card)
-import defaultPassport from "../../assets/default_passport.png"; // fallback passport
+// impo from "../../assets/default_passport.png"; // fallback passport
 import defaultQr from "../../assets/Student_Qr.png";         // fallback qr
 import defaultSignature from "../../assets/default_sign.jpg"; // fallback registrar/signature
 import { useParams } from "react-router-dom";
@@ -103,7 +103,7 @@ const IDCard = React.forwardRef(({ idcardData }, ref) => {
           >
             <div className="hexagon-inner">
               <img
-                src={data.passport || defaultPassport}
+                src={data.passport }
                 alt="passport"
                 style={{ width: "100%", height: "100%", objectFit: "cover" }}
               />
