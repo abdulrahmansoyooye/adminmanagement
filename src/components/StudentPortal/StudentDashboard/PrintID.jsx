@@ -31,7 +31,7 @@ const IDCard = React.forwardRef(({ idcardData }, ref) => {
     >
       {/* FRONT */}
       <div
-        className="idcard-front bg-white shadow-2xl overflow-hidden"
+        className="idcard-front bg-white shadow-2xl overflow-hidden -z-10"
         style={{
           width: 320,
           height: 510,

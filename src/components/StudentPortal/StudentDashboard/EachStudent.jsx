@@ -1,129 +1,182 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
+import { useReactToPrint } from "react-to-print";
 import { api } from "../../../lib/api";
 import IdCardDetails from "../IDcardDetails";
-import { useReactToPrint } from "react-to-print";
-import { useRef } from "react";
+
+const VALID_STATUSES = ["pending", "approved", "revoked"];
 
 export default function StudentProfile() {
   const { id } = useParams();
-  const [idCard, setIdCard] = useState(null);
-  const [loading, setLoading] = useState(true);
-
   const printRef = useRef(null);
 
+  const [idCard, setIdCard] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [canPrint, setCanPrint] = useState(false);
+
+  /* ---------------------------- Fetch ID Card ---------------------------- */
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchIdCard = async () => {
+      try {
+        const res = await api.get(`/idcard/${id}`);
+        if (!isMounted) return;
+
+        const card = res?.data;
+        setIdCard(card?.status === "none" ? null : card);
+      } catch (error) {
+        console.error("Failed to fetch ID card:", error);
+        setIdCard(null);
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    fetchIdCard();
+    return () => {
+      isMounted = false;
+    };
+  }, [id]);
+
+  /* ----------------------- Enable Print When Ready ----------------------- */
+  useEffect(() => {
+    if (printRef.current && idCard?.status === "approved") {
+      setCanPrint(true);
+    } else {
+      setCanPrint(false);
+    }
+  }, [idCard]);
+
+  /* ----------------------------- Print Logic ----------------------------- */
   const handlePrint = useReactToPrint({
     content: () => {
       if (!printRef.current) {
-        console.error("Print reference is missing!");
+        console.error("Print aborted: printRef is null");
+        return null;
       }
       return printRef.current;
     },
     documentTitle: `Student_ID_${idCard?.matricNumber || "Card"}`,
+    removeAfterPrint: true,
     pageStyle: `
-      @page {
-        size: auto;
-        margin: 0mm;
-      }
+      @page { size: A4; margin: 0; }
       @media print {
         body {
+          margin: 0;
           -webkit-print-color-adjust: exact;
+          print-color-adjust: exact;
         }
       }
     `,
   });
 
-  useEffect(() => {
-    const fetchIdCard = async () => {
+  /* --------------------------- Status Update ----------------------------- */
+  const updateStatus = useCallback(
+    async (action) => {
+      if (!idCard?._id) return;
+
       try {
-        const res = await api.get(`/idcard/${id}`);
-        setIdCard(res.data.status === "none" ? null : res.data);
-      } finally {
-        setLoading(false);
+        const res = await api.patch(`/idcard/${idCard._id}/${action}`);
+        setIdCard(res.data);
+      } catch (error) {
+        console.error("Failed to update ID card status:", error);
       }
-    };
-    fetchIdCard();
-  }, [id]);
+    },
+    [idCard]
+  );
 
-  const updateStatus = async (action) => {
-    const res = await api.patch(`/idcard/${idCard._id}/${action}`);
-    setIdCard(res.data);
-  };
+  /* ------------------------------- Guards -------------------------------- */
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-green-600" />
+      </div>
+    );
+  }
 
+  if (!idCard || !VALID_STATUSES.includes(idCard.status)) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-gray-500">
+        ID Card has not been requested yet.
+      </div>
+    );
+  }
+
+  /* -------------------------------- UI ---------------------------------- */
   return (
-    <main className="min-h-screen bg-gray-50 p-6 md:p-12 font-sans">
-      <section className="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-xl space-y-8 border border-gray-100">
-        <header className="text-center border-b pb-4 mb-4">
-           <h2 className="text-2xl font-bold text-gray-800">Student ID Card Status</h2>
-           <p className="text-gray-500 text-sm mt-1">Manage card approvals and printing</p>
+    <main className="min-h-screen bg-gray-50 p-6 md:p-12">
+      <section className="mx-auto max-w-2xl rounded-2xl bg-white p-8 shadow-xl">
+        {/* Header */}
+        <header className="mb-6 border-b pb-4 text-center">
+          <h2 className="text-2xl font-bold text-gray-800">
+            Student ID Card
+          </h2>
+          <p className="text-sm text-gray-500">
+            Approval & printing
+          </p>
         </header>
 
-        {loading ? (
-             <div className="flex justify-center items-center py-12">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
-             </div>
-        ) : !idCard || (idCard.status !== 'pending' && idCard.status !== 'revoked' && idCard.status !== 'approved') ? (
-          <div className="text-center py-12 bg-gray-50 rounded-xl border border-dashed border-gray-300">
-            <p className="text-gray-500 font-medium">ID Card has not been requested yet.</p>
+        {/* Printable Area (ALWAYS RENDERED) */}
+        <div className="flex justify-center rounded-xl bg-gray-100 p-6">
+          <div ref={printRef} className="print-area">
+            <IdCardDetails data={idCard} />
           </div>
-        ) : (
-          <div className="space-y-8">
-            {/* Printable Area - Centered ID Card */}
-            <div className="flex justify-center bg-gray-100 p-6 rounded-xl border border-gray-200">
-                <div ref={printRef} className="print:m-0 print:p-0">
-                  <IdCardDetails data={idCard} />
-                </div>
-            </div>
-            
-            <div className="space-y-4">
-                 {/* Status Badge */}
-                 <div className="flex justify-center">
-                    <span className={`px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider ${
-                        idCard.status === 'approved' ? 'bg-green-100 text-green-700' :
-                        idCard.status === 'revoked' ? 'bg-red-100 text-red-700' :
-                        'bg-yellow-100 text-yellow-700'
-                    }`}>
-                        Status: {idCard.status}
-                    </span>
-                 </div>
+        </div>
 
-                {/* Actions */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Approve Action */}
-                  {(idCard.status === "pending" || idCard.status === "revoked") && (
-                    <button
-                      onClick={() => updateStatus("approve")}
-                      className="w-full bg-green-600 text-white py-3 rounded-lg font-medium shadow-md hover:bg-green-700 hover:shadow-lg transition-all transform active:scale-95"
-                    >
-                      Approve Request
-                    </button>
-                  )}
+        {/* Status Badge */}
+        <div className="my-6 flex justify-center">
+          <span
+            className={`rounded-full px-4 py-1.5 text-xs font-semibold uppercase
+              ${
+                idCard.status === "approved"
+                  ? "bg-green-100 text-green-700"
+                  : idCard.status === "revoked"
+                  ? "bg-red-100 text-red-700"
+                  : "bg-yellow-100 text-yellow-700"
+              }
+            `}
+          >
+            Status: {idCard.status}
+          </span>
+        </div>
 
-                  {/* Approved Actions: Revoke & Print */}
-                  {idCard.status === "approved" && (
-                    <>
-                      <button
-                        onClick={() => handlePrint()}
-                        className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium shadow-md hover:bg-indigo-700 hover:shadow-lg transition-all transform active:scale-95 flex items-center justify-center gap-2"
-                      >
-                       <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2-4h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6a2 2 0 012-2zm9-2a1 1 0 11-2 0 1 1 0 012 0z" />
-                       </svg>
-                        Print Card
-                      </button>
+        {/* Actions */}
+        <div className="grid gap-4 md:grid-cols-2">
+          {(idCard.status === "pending" || idCard.status === "revoked") && (
+            <button
+              onClick={() => updateStatus("approve")}
+              className="rounded-lg bg-green-600 py-3 font-medium text-white transition hover:bg-green-700"
+            >
+              Approve Request
+            </button>
+          )}
 
-                      <button
-                        onClick={() => updateStatus("revoke")}
-                        className="w-full bg-red-50 text-red-600 border border-red-200 py-3 rounded-lg font-medium hover:bg-red-100 transition-colors active:bg-red-200"
-                      >
-                        Revoke Approval
-                      </button>
-                    </>
-                  )}
-                </div>
-            </div>
-          </div>
-        )}
+          {idCard.status === "approved" && (
+            <>
+              <button
+                onClick={handlePrint}
+                disabled={!canPrint}
+                className={`rounded-lg py-3 font-medium text-white transition
+                  ${
+                    canPrint
+                      ? "bg-indigo-600 hover:bg-indigo-700"
+                      : "bg-gray-400 cursor-not-allowed"
+                  }
+                `}
+              >
+                Print Card
+              </button>
+
+              <button
+                onClick={() => updateStatus("revoke")}
+                className="rounded-lg border border-red-200 bg-red-50 py-3 font-medium text-red-600 transition hover:bg-red-100"
+              >
+                Revoke Approval
+              </button>
+            </>
+          )}
+        </div>
       </section>
     </main>
   );
